@@ -5,13 +5,60 @@ from datetime import datetime
 
 st.set_page_config(page_title="Workshop Inventory System", layout="wide")
 
-st.sidebar.title("🔧 Workshop Inventory")
-page = st.sidebar.radio("Navigation", ["📊 Dashboard", "➕ Add Item", "✏️ Edit/Delete", "🔄 Check Out/In", "📜 Borrow History", "📄 Reports"])
+# ===== BRANDING HEADER WITH YOUR LOGO =====
+st.markdown("---")
+col1, col2 = st.columns([1, 4])
 
+with col1:
+    # Check if logo exists
+    if os.path.exists("logo.png"):
+        st.image("logo.png", width=100)
+    else:
+        st.warning("⚠️ Logo file not found. Please ensure 'logo.png' is in the folder")
+        st.markdown("## 🏫")  # Fallback emoji
+
+with col2:
+    st.markdown("""
+    ### Diploma in Mechanical Engineering  
+    **ME4105: Final Year Project**  
+    *Workshop Inventory Management System*
+    """)
+
+st.markdown("---")
+
+# Student and supervisor info
+col_a, col_b = st.columns(2)
+with col_a:
+    st.info("👨‍🎓 **Student:** Mohammad Abdul Haliq Hasnal (22FTE2816)")
+with col_b:
+    st.info("👨‍🏫 **Supervisor:** Sir Nadjuan Narawi")
+
+st.markdown("---")
+
+# Sidebar
+st.sidebar.title("🔧 Workshop Inventory")
+st.sidebar.markdown("---")
+
+# Add logo to sidebar too
+if os.path.exists("logo.png"):
+    st.sidebar.image("logo.png", width=150)
+
+st.sidebar.markdown("**ME4105 Final Year Project**")
+st.sidebar.markdown("*Mohammad Abdul Haliq Hasnal*")
+
+page = st.sidebar.radio("Navigation", [
+    "📊 Dashboard", 
+    "➕ Add Item", 
+    "✏️ Edit/Delete", 
+    "🔄 Check Out/In", 
+    "📜 Borrow History", 
+    "📄 Reports"
+])
+
+# ===== YOUR DATABASE CODE HERE (same as before) =====
 CSV_FILE = "inventory.csv"
 HISTORY_FILE = "borrow_history.csv"
 
-# Initialize databases
 def init_database():
     if not os.path.exists(CSV_FILE):
         sample_data = pd.DataFrame({
@@ -77,9 +124,9 @@ if page == "📊 Dashboard":
     low_stock = df[df["quantity"] <= df["min_stock"]]
     if not low_stock.empty:
         for _, item in low_stock.iterrows():
-            st.warning(f"**{item['item_name']}** - Only {item['quantity']} left")
+            st.warning(f"**{item['item_name']}** - Only {item['quantity']} left (Min: {item['min_stock']})")
     else:
-        st.success("All items well-stocked!")
+        st.success("All items are well-stocked!")
     
     st.subheader("📋 Full Inventory")
     st.dataframe(df, use_container_width=True)
@@ -217,7 +264,6 @@ elif page == "📜 Borrow History":
     if history_df.empty:
         st.info("No transactions yet")
     else:
-        # Filter by student
         students = ["All"] + history_df["student_name"].unique().tolist()
         filter_student = st.selectbox("Filter by student", students)
         
@@ -227,12 +273,9 @@ elif page == "📜 Borrow History":
         
         st.dataframe(filtered, use_container_width=True)
         
-        # Download history
         csv = filtered.to_csv(index=False)
         st.download_button("📥 Download History CSV", csv, "borrow_history.csv", mime="text/csv")
         
-        # Summary stats
-        st.subheader("Quick Stats")
         col1, col2 = st.columns(2)
         with col1:
             st.metric("Total Transactions", len(filtered))
@@ -257,5 +300,10 @@ elif page == "📄 Reports":
         csv = filtered_df.to_csv(index=False)
         st.download_button("📥 Download Report", csv, "inventory_report.csv", mime="text/csv")
 
+# ==================== FOOTER ====================
 st.sidebar.markdown("---")
-st.sidebar.info("**Workshop Inventory System v2.0**\n\n✅ Borrow Tracking\n✅ Student Names\n✅ Edit/Delete")
+st.sidebar.caption(f"📅 ME4105 Final Year Project 2026")
+st.sidebar.caption("🔧 Diploma in Mechanical Engineering")
+
+st.markdown("---")
+st.caption("© 2026 Mohammad Abdul Haliq Hasnal | ME4105 Final Year Project | Supervised by Sir Nadjuan Narawi")
