@@ -1,0 +1,6 @@
+id,item_name,quantity,min_stock,location,status
+1,Hammer,4,2,Shelf A1,Available
+2,Drill,2,1,Shelf B2,Available
+3,Screwdriver Set,3,2,Toolbox C3,Available
+4,Wrench,8,2,Shelf D4,Available
+5,Measuring tape,4,1,Shelf A2,
