@@ -261,8 +261,18 @@ elif page == "📜 Borrow History":
     
     history_df = load_history()
     
+    # Clear history button
+    col1, col2 = st.columns([3, 1])
+    with col2:
+        if st.button("🗑️ Clear All History", type="secondary"):
+            # Create empty history with just headers
+            empty_history = pd.DataFrame(columns=["timestamp", "student_name", "item_name", "action", "quantity_after"])
+            save_history(empty_history)
+            st.success("✅ Borrow history cleared!")
+            st.rerun()
+    
     if history_df.empty:
-        st.info("No transactions yet")
+        st.info("No transactions yet. Borrow a tool to see history here!")
     else:
         students = ["All"] + history_df["student_name"].unique().tolist()
         filter_student = st.selectbox("Filter by student", students)
